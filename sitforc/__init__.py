@@ -8,6 +8,6 @@ experimental data.
 '''
 __version__ = '0.1'
 
-from core import modellib, load_csv, identify_reg
+from core import modellib, load_csv, identify_reg, identify_itm
 from fitting import PolyFitter, ModelFitter
 

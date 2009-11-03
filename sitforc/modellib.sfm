@@ -12,13 +12,20 @@ sigma = 5
 height = 8
 func = p["height"] * ( 1 - exp(-((x-p["mu"])/p["sigma"])**2))
 
+[exp_approach]
+c = 10
+t = 0.5
+dx = 5
+func = p["c"] * (1 - exp(-((x-p["dx"])/p["t"])))
+comment = Sprungantwort eines PT1-Gliedes
+
 # PT-Glieder mit unterschiedlichen Zeitkoeffizienten
 
 [pt1]
 c = 10
 t = 0.5
 func = p["c"] * (1 - exp(-(x/p["t"])))
-comment = Sprungantwort eines PT1-Gliedes (entspricht exp. Annaeherung)
+comment = Sprungantwort eines PT1-Gliedes
 
 [pt2]
 c = 10

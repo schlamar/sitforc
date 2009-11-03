@@ -12,8 +12,7 @@ from abc import ABCMeta, abstractmethod
 import numpy
 import sympy
 
-import numlib
-import symlib
+from sitforc import numlib, symlib
 
 class Fitter(object):
     '''
@@ -136,6 +135,8 @@ class PolyFitter(Fitter):
         im Bereich von x.
         '''
         coeffs = self.data_cache[0]['obj']
+        self._derivate(1)
+        coeffs1 = self.data_cache[1]['obj'] # 1. Ableitung
         self._derivate(2)
         coeffs2 = self.data_cache[2]['obj'] # 2. Ableitung
         self._derivate(3)
@@ -145,9 +146,13 @@ class PolyFitter(Fitter):
                          if x_val.imag == 0 and 
                          numpy.polyval(coeffs3, float(x_val)) != 0 and
                          self.x[0] <= float(x_val) <= self.x[-1]]
-        x_vals = numpy.array(inflec_points)
-        y_vals = numpy.polyval(coeffs, x_vals)
-        return x_vals, y_vals
+        #x_vals = numpy.array(inflec_points)
+        #y_vals = numpy.polyval(coeffs, x_vals)
+        #slopes = numpy.polyval(coeffs1, x_vals)
+        return [(x_point, numpy.polyval(coeffs, x_point), 
+                 numpy.polyval(coeffs1, x_point)) 
+                 for x_point in inflec_points]
+        #return x_vals, y_vals, slopes
     
 class ModelFitter(Fitter):
     '''
