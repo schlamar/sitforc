@@ -194,9 +194,6 @@ class ModelLibrary(object):
                  'No changes to "{0}"'.format(name), SitforcWarning)
         
         
-load_csv = partial(numpy.loadtxt, delimiter=';', unpack=True)
-#TODO: converter?
-
 modellib = ModelLibrary()
 
 class Identifier(object):
@@ -301,10 +298,6 @@ class ITMIdentifier(Identifier):
         plot(self.x, self.y)
         show()
     
-    
-        
-
-
 def _shift_data(x, y, width):
     '''
     Verschiebt die Daten um ``width`` und schneidet die 
@@ -329,4 +322,11 @@ def identify_itm(x, y, degree=11, shift=0.0):
         x, y = _shift_data(x, y, shift)
     itmi = ITMIdentifier(x, y, degree)
     itmi.show_solution()
+
+def _convert_excel_float(value):
+    return float(value.replace(',', '.'))  
+load_csv = partial(numpy.loadtxt, delimiter=';', unpack=True, 
+                   converters = {0: _convert_excel_float, 
+                                 1: _convert_excel_float} )
+#TODO: converter?
         
