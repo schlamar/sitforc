@@ -6,18 +6,24 @@ von gegebenen Daten und zum Anzeigen, Ändern und
 Erstellen von Regressionsmodellen.
 '''
 
+
 import os
 from abc import ABCMeta, abstractmethod
 from functools import partial
 from itertools import izip
+from warnings import warn
 
 import numpy
+import configobj
 from configobj import ConfigObj
 from matplotlib.pyplot import (figure, legend, grid, text, show,
                                subplot, plot)
 
 from sitforc.funcparser import parse_func
 from sitforc.fitting import ModelFitter, PolyFitter
+
+class SitforcWarning(Warning):
+    pass
 
 class Model(object):
     '''
@@ -83,6 +89,7 @@ class Model(object):
         figure()
         plot(x, self(x))
         show()
+
         
 # REPORT: explain why not implemented as singleton
 class ModelLibrary(object):
@@ -126,8 +133,14 @@ class ModelLibrary(object):
         Lädt die definierten Modelle in der Datei "modellib.sfm".
         '''
         folder = os.path.dirname(__file__)
-        config = ConfigObj(os.path.join(folder, 'modellib.sfm'))
-        # Hinweis: Endung "sfm" steht für (s)it(f)orc(m)odels
+        try:
+            config = ConfigObj(os.path.join(folder, 'modellib.sfm'))
+        except configobj.ConfigObjError, e:
+            raise configobj.ConfigObjError('File "modellib.sfm" has an error: {0}'
+                                       .format(e))
+        if not config:
+            warn('File "modellib.sfm" could not read or is empty. '
+                 'No models in modellib.', SitforcWarning)
         for modelname in config:
             params = dict()
             comment = ''
@@ -139,6 +152,7 @@ class ModelLibrary(object):
                 else:
                     params[key] = config[modelname].as_float(key)
             func, latex, ident_params = parse_func(funcstring)
+            # TODO: Funktion testen und warnen
             self.lib[modelname] = Model(modelname, func, 
                                         funcstring, latex, 
                                         **params)
@@ -151,7 +165,35 @@ class ModelLibrary(object):
         '''
         self.lib = dict()
         self._load()
-
+        
+    def save(self):
+        '''
+        Speichert die Bibliothek.
+        '''
+        config = ConfigObj()
+        folder = os.path.dirname(__file__)
+        config.filename = os.path.join(folder, 'modellib.sfm')
+        for model in self.lib.values():
+            config[model.name] = {}
+            config[model.name]['func'] = model.funcstring
+            config[model.name].update(model.default_params)
+            if model.comment:
+                config[model.name]['comment'] = model.comment
+        config.write()
+        
+    
+    def new_model(self, name, func, funcstring, latex, **params):
+        '''
+        Legt ein neues Modell in der Bibliothek an.
+        '''
+        model = Model(name, func, funcstring, latex, **params)
+        if name not in self.lib:
+            self.lib[name] = model
+        else:
+            warn('This Model already exists in modellib. '
+                 'No changes to "{0}"'.format(name), SitforcWarning)
+        
+        
 load_csv = partial(numpy.loadtxt, delimiter=';', unpack=True)
 #TODO: converter?
 

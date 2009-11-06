@@ -73,6 +73,10 @@ class TestFuncparser(unittest.TestCase):
         latex = parse_func(funcstring)[1]
         self.assertEqual(latex, r'$-(x)$')
         
+        funcstring = 'x + p["c"]'
+        latex = parse_func(funcstring)[1]
+        self.assertEqual(latex, r'$(x + c)$')
+        
         funcstring = 'exp(2)'
         latex = parse_func(funcstring)[1]
         self.assertEqual(latex, r'$\mathrm{e}^{2}$')

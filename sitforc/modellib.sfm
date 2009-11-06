@@ -1,64 +1,46 @@
-# Regressionsmodelle für SITforC
-# Keine Umlaute verwenden!
-
 [linear]
-a = 1
-b = 1
 func = p["a"] * x + p["b"]
-
+a = 1.0
+b = 1.0
+[pt5_sim]
+func = p["c"] * (1 - exp(-(x/p["t"]))  * ( 1 + (x/p["t"])**1 / fac(1) + (x/p["t"])**2 / fac(2) + (x/p["t"])**3 / fac(3) + (x/p["t"])**4 / fac(4) ) )
+c = 10.0
+t = 10.0
+[pt3_sim]
+func = p["c"] * (1 - exp(-(x/p["t"]))  * ( 1 + (x/p["t"])**1 / fac(1) + (x/p["t"])**2 / fac(2) ) )
+c = 10.0
+t = 0.6
+[pt4_sim]
+func = p["c"] * (1 - exp(-(x/p["t"]))  * ( 1 + (x/p["t"])**1 / fac(1) + (x/p["t"])**2 / fac(2) + (x/p["t"])**3 / fac(3) ) )
+c = 10.0
+t = 5.0
 [gaussian]
-mu = 3
-sigma = 5
-height = 8
 func = p["height"] * ( 1 - exp(-((x-p["mu"])/p["sigma"])**2))
-
-[exp_approach]
-c = 10
-t = 0.5
-dx = 5
-func = p["c"] * (1 - exp(-((x-p["dx"])/p["t"])))
-comment = Sprungantwort eines PT1-Gliedes
-
-# PT-Glieder mit unterschiedlichen Zeitkoeffizienten
-
-[pt1]
-c = 10
-t = 0.5
-func = p["c"] * (1 - exp(-(x/p["t"])))
-comment = Sprungantwort eines PT1-Gliedes
-
+mu = 3.0
+sigma = 5.0
+height = 8.0
 [pt2]
-c = 10
-t1 = 0.5
-t2 = 1
 func = p["c"] * (1 - (( p["t1"]*exp(-(x/p["t1"])) ) / (p["t1"] - p["t2"]) - (p["t2"]*exp(-(x/p["t2"])) ) / (p["t1"] - p["t2"]) ) )
-
+c = 10.0
+t2 = 1.0
+t1 = 0.5
+[exp_approach]
+func = p["c"] * (1 - exp(-((x-p["dx"])/p["t"])))
+c = 10.0
+t = 0.5
+dx = 5.0
 [pt3]
-c = 5
-t1 = 0.64
+func = p["c"] * (1 - ( ( p["t1"]**2 * exp(-(x/p["t1"]))) / ( (p["t1"] - p["t2"]) * (p["t1"] - p["t3"]) ) + ( p["t2"]**2 * exp(-(x/p["t2"]))) / ( (p["t2"] - p["t1"]) * (p["t2"] - p["t3"]) ) + ( p["t3"]**2 * exp(-(x/p["t3"]))) / ( (p["t3"] - p["t2"]) * (p["t3"] - p["t1"]) ) ) )
+c = 5.0
 t2 = 1.0
 t3 = 2.2
-func = p["c"] * (1 - ( ( p["t1"]**2 * exp(-(x/p["t1"]))) / ( (p["t1"] - p["t2"]) * (p["t1"] - p["t3"]) ) + ( p["t2"]**2 * exp(-(x/p["t2"]))) / ( (p["t2"] - p["t1"]) * (p["t2"] - p["t3"]) ) + ( p["t3"]**2 * exp(-(x/p["t3"]))) / ( (p["t3"] - p["t2"]) * (p["t3"] - p["t1"]) ) ) )
-
-
-# PT-Glieder mit gleichen Zeitkoeffizienten
-
+t1 = 0.64
 [pt2_sim]
-c = 10
-t = 0.6
 func = p["c"] * (1 - exp(-(x/p["t"]))  * ( 1 + (x/p["t"])**1 / fac(1) ) )
-
-[pt3_sim]
-c = 10
+c = 10.0
 t = 0.6
-func = p["c"] * (1 - exp(-(x/p["t"]))  * ( 1 + (x/p["t"])**1 / fac(1) + (x/p["t"])**2 / fac(2) ) )
-
-[pt4_sim]
-c = 10
-t = 5
-func = p["c"] * (1 - exp(-(x/p["t"]))  * ( 1 + (x/p["t"])**1 / fac(1) + (x/p["t"])**2 / fac(2) + (x/p["t"])**3 / fac(3) ) )
-
-[pt5_sim]
-c = 10
-t = 10
-func = p["c"] * (1 - exp(-(x/p["t"]))  * ( 1 + (x/p["t"])**1 / fac(1) + (x/p["t"])**2 / fac(2) + (x/p["t"])**3 / fac(3) + (x/p["t"])**4 / fac(4) ) )
+[pt1]
+func = p["c"] * (1 - exp(-(x/p["t"])))
+c = 10.0
+t = 0.5
+comment = Sprungantwort eines PT1-Gliedes
