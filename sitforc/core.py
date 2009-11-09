@@ -19,7 +19,7 @@ from configobj import ConfigObj
 from matplotlib.pyplot import (figure, legend, grid, text, show,
                                subplot, plot)
 
-from sitforc.funcparser import parse_func
+from sitforc.funcparser import parse_func, ParseException
 from sitforc.fitting import ModelFitter, PolyFitter
 
 class SitforcWarning(Warning):
@@ -144,6 +144,7 @@ class ModelLibrary(object):
         for modelname in config:
             params = dict()
             comment = ''
+            funcstring = ''
             for key in config[modelname]:
                 if key == 'func':
                     funcstring = config[modelname][key]
@@ -151,8 +152,27 @@ class ModelLibrary(object):
                     comment = config[modelname][key]
                 else:
                     params[key] = config[modelname].as_float(key)
-            func, latex, ident_params = parse_func(funcstring)
-            # TODO: Funktion testen und warnen
+            if not funcstring:
+                warn('Function not defined for model "{0}" '
+                     '(in "modellib.sfm").'.format(modelname), 
+                     SitforcWarning)
+                continue
+            try:
+                func, latex, ident_params = parse_func(funcstring)
+            except ParseException, e:
+                warn('Function for model "{0}" in "modellib.sfm" has '
+                     'an error: {1}'.format(modelname, e), 
+                     SitforcWarning)
+                continue
+
+            try:
+                func(1, params)
+            except KeyError, e:
+                warn('Param {0} for model "{1}" is not defined '
+                     'in "modellib.sfm".'.format(e, modelname), 
+                     SitforcWarning)
+                continue
+            
             self.lib[modelname] = Model(modelname, func, 
                                         funcstring, latex, 
                                         **params)
@@ -328,5 +348,5 @@ def _convert_excel_float(value):
 load_csv = partial(numpy.loadtxt, delimiter=';', unpack=True, 
                    converters = {0: _convert_excel_float, 
                                  1: _convert_excel_float} )
-#TODO: converter?
+#TODO: kommentare
         

@@ -1,7 +1,10 @@
+# coding: utf-8
+
 from warnings import catch_warnings
-import configobj
 import os
 import unittest
+
+import configobj
 
 from sitforc.core import Model, modellib
 from sitforc.core import SitforcWarning
