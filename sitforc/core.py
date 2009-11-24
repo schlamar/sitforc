@@ -78,7 +78,7 @@ class Model(object):
         Dafür wird der generatierte LaTeX-String automatisch
         gerendert.
         '''
-        figure(figsize=(12, 2))
+        figure(figsize=(10, 2))
         subplot(111, frameon=False, xticks=[], yticks=[])
         text(0.5, 0.5, self.latex, fontsize=30, horizontalalignment='center')
         #show()
@@ -267,11 +267,38 @@ class ITMIdentifier(Identifier):
         Identifier.__init__(self, x, y)
         
         self.poly_fitter = PolyFitter(x, y, degree)
-        i_points = self.poly_fitter.get_inflec_points()
+        self.i_points = self.poly_fitter.get_inflec_points()
         
+        self.calculate_inflec_point(0)
+    
+    @property    
+    def t_x(self):
+        ''' 
+        x-Werte der Tangente
+        '''
+        return numpy.arange(self.death_time, self.end_time, 0.1)
+    
+    @property    
+    def t_y(self):
+        '''
+        y-Werte der Tangente
+        '''
+        m = self.tangent_slope
+        b = self.tangent_offset
+        return m * self.t_x + b
+    
+    @property
+    def tu(self):
+        return self.death_time
+    
+    @property
+    def tg(self):
+        return self.end_time - self.death_time
+        
+    def calculate_inflec_point(self, num):
         # Jedes Tuple in i_points enthält, den x und y-Wert
         # sowie die Steigung
-        x, y, m = i_points[0]
+        x, y, m = self.i_points[num]
         
         # Tangentenform "mx + b = y"
         b = y - m*x
@@ -303,22 +330,18 @@ class ITMIdentifier(Identifier):
         m = self.tangent_slope
         b = self.tangent_offset
         print 'Tangente: {0}x + {1}'.format(m, b)
-        tg = self.end_time - self.death_time
-        print 'Tu: {0}'.format(self.death_time)
-        print 'Tg: {0}'.format(tg)
-        print 'Tu/Tg: {0}'.format(self.death_time/tg)
-        print 'Tg/Tu: {0}'.format(tg/self.death_time)
-        
-        t_x = numpy.arange(self.death_time, self.end_time, 0.1)
-        t_y = m * t_x + b
+        print 'Tu: {0}'.format(self.tu)
+        print 'Tg: {0}'.format(self.tg)
+        print 'Tu/Tg: {0}'.format(self.tu/self.tg)
+        print 'Tg/Tu: {0}'.format(self.tg/self.tu)
         
         c = self.height
         plot([self.x[0], self.x[-1]], [c, c], '--')
-        plot(t_x, t_y)
+        plot(self.t_x, self.t_y)
         plot(self.x, self.y)
         show()
     
-def _shift_data(x, y, width):
+def shift_data(x, y, width):
     '''
     Verschiebt die Daten um ``width`` und schneidet die 
     Daten < 0 aus. Die Funktion wird also auf der x-Achse 
@@ -333,13 +356,13 @@ def _shift_data(x, y, width):
 
 def identify_reg(x, y, model, shift=0.0):
     if shift > 0:
-        x, y = _shift_data(x, y, shift)
+        x, y = shift_data(x, y, shift)
     ri = RegressionIdentifier(x, y, model)
     ri.show_solution()
     
 def identify_itm(x, y, degree=11, shift=0.0):
     if shift > 0:
-        x, y = _shift_data(x, y, shift)
+        x, y = shift_data(x, y, shift)
     itmi = ITMIdentifier(x, y, degree)
     itmi.show_solution()
 
