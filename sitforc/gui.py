@@ -164,6 +164,12 @@ class GUI(gtk.Window):
         
         self.itm_param_lstore = gtk.ListStore(gobject.TYPE_STRING, 
                                gobject.TYPE_STRING)
+        lstore = self.itm_param_lstore
+        lstore.append(('Tu', ''))
+        lstore.append(('Tg',''))
+        lstore.append(('Tu/Tg', ''))
+        lstore.append(('Tg/Tu', ''))
+        
         view = gtk.TreeView(self.itm_param_lstore)
         view.set_border_width(3)
         hbox.pack_start(view, True, True, 3)
@@ -215,34 +221,44 @@ class GUI(gtk.Window):
                 self.shift_spin.set_sensitive(True)
             except TypeError, e:
                 if str(e) == 'Improper input parameters.':
-                    #TODO: msgbox
+                    #TODO: Warning
                     print 'Parameter schlecht gewählt (z.B. Verschiebung)'
+                else:
+                    raise
                     
         elif self.method == METHOD_ITM:
             self.shift_spin.set_sensitive(True)
-            if self.ipoint_changed:
-                num = self.ipoint_combo.get_active()
-                if num >= 0:
-                    self.identifier.calculate_inflec_point(num)
-                self.ipoint_changed = False
-            else:
-                degree = self.poly_degree_spin.get_value_as_int()
-                self.identifier = ITMIdentifier(x, y, degree)
-                self.ipoint_combo.get_model().clear()
-                for x, y, xp in self.identifier.i_points:
-                    text = 'x: {0:.3f}, y: {1:.3f}'.format(x, y)
-                    self.ipoint_combo.append_text(text)
-            ident = self.identifier
-            c = ident.height
-            axes.plot([ident.x[0], ident.x[-1]], [c, c], '--')
-            axes.plot(ident.t_x, ident.t_y)
-            
-            lstore = self.itm_param_lstore
-            lstore.clear()
-            lstore.append(('Tu', '{0:.3f}'.format(ident.tu)))
-            lstore.append(('Tg','{0:.3f}'.format(ident.tg)))
-            lstore.append(('Tu/Tg', '{0:.3f}'.format(ident.tu/ident.tg)))
-            lstore.append(('Tg/Tu', '{0:.3f}'.format(ident.tg/ident.tu)))
+            try:
+                if self.ipoint_changed:
+                    num = self.ipoint_combo.get_active()
+                    if num >= 0:
+                        self.identifier.calculate_inflec_point(num)
+                    self.ipoint_changed = False
+                else:
+                    degree = self.poly_degree_spin.get_value_as_int()
+                    self.identifier = ITMIdentifier(x, y, degree)
+                    self.ipoint_combo.get_model().clear()
+                    for x, y, xp in self.identifier.i_points:
+                        text = 'x: {0:.3f}, y: {1:.3f}'.format(x, y)
+                        self.ipoint_combo.append_text(text)
+                ident = self.identifier
+                c = ident.height
+                axes.plot([ident.x[0], ident.x[-1]], [c, c], '--')
+                axes.plot(ident.t_x, ident.t_y)
+                
+                lstore = self.itm_param_lstore
+                lstore.clear()
+                lstore.append(('Tu', '{0:.3f}'.format(ident.tu)))
+                lstore.append(('Tg','{0:.3f}'.format(ident.tg)))
+                lstore.append(('Tu/Tg', '{0:.3f}'.format(ident.tu/ident.tg)))
+                lstore.append(('Tg/Tu', '{0:.3f}'.format(ident.tg/ident.tu)))
+            except TypeError, e:
+                if str(e) == 'expected non-empty vector for x':
+                    #TODO: Warning
+                    print 'Parameter schlecht gewählt (z.B. Verschiebung)'
+                else:
+                    raise
+                
                     
         self.recreate_canvas(fig)
         self.resize(1, 1)
