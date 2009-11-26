@@ -9,7 +9,6 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_gtkagg import (FigureCanvasGTKAgg
             as FigureCanvas)
 import matplotlib
-import numpy as np
 matplotlib.interactive(True)
 
 from sitforc import load_csv, modellib
@@ -69,11 +68,24 @@ class GUI(gtk.Window):
         self.method_notebook.insert_page(itm_page, 
                                          gtk.Label('Wendetangente'),
                                          METHOD_ITM)
-        vbox.pack_start(self.method_notebook, False, False, 5)
+        vbox.pack_start(self.method_notebook, False, False, 3)
         self.method_notebook.show()
         
+        hbox = gtk.HBox()
+        vbox.pack_start(hbox, False, False, 0)
+        hbox.show()
+        
+        img = gtk.Image()
+        img.set_from_stock(gtk.STOCK_ZOOM_IN, gtk.ICON_SIZE_SMALL_TOOLBAR)
+        button = gtk.Button()
+        button.connect('clicked', self.zoom_in)
+        button.set_image(img)
+        button.set_relief(gtk.RELIEF_NONE)
+        hbox.pack_end(button, False, False, 0)
+        button.show()
+        
         self.canvas_frame = gtk.Frame()
-        vbox.pack_start(self.canvas_frame, False, False, 5)
+        vbox.pack_start(self.canvas_frame, False, False, 3)
         self.canvas_frame.show()
         
         fig = Figure()
@@ -186,6 +198,17 @@ class GUI(gtk.Window):
         
         return itm_page
     
+    def zoom_in(self, button):
+        if self.identifier:
+            self.identifier.plot_solution()
+        elif not self.data == None:
+            x, y = self.data
+            x, y = shift_data(x, y, self.shift_spin.get_value())
+            matplotlib.pyplot.plot(x, y, label='data')
+            matplotlib.pyplot.legend()
+            matplotlib.pyplot.grid()
+            matplotlib.pyplot.show()
+    
     def nb_page_switch(self, notebook, page, page_num):
         self.method = page_num
         self.recreate_identifier = True
@@ -219,6 +242,7 @@ class GUI(gtk.Window):
                                                       .format(value)))
             except KeyError:
                 self.shift_spin.set_sensitive(True)
+                self.identifier = None
             except TypeError, e:
                 if str(e) == 'Improper input parameters.':
                     #TODO: Warning

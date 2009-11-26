@@ -238,6 +238,10 @@ class Identifier(object):
     def show_solution(self):
         pass
     
+    @abstractmethod
+    def plot_solution(self):
+        pass
+    
 class RegressionIdentifier(Identifier):
     '''
     Klasse zum Identifizieren von Daten mit einem
@@ -255,6 +259,10 @@ class RegressionIdentifier(Identifier):
                'wurden an folgende Werte angenaehert:\n{1}').format(
                 mf.model.name, mf.params)
         modellib[mf.model.name].show()
+        self.plot_solution()
+        
+    def plot_solution(self):
+        mf = self.model_fitter
         figure()
         plot(self.x, self.y, label='data')
         plot(mf.x, mf.y, label='fitted')
@@ -334,11 +342,15 @@ class ITMIdentifier(Identifier):
         print 'Tg: {0}'.format(self.tg)
         print 'Tu/Tg: {0}'.format(self.tu/self.tg)
         print 'Tg/Tu: {0}'.format(self.tg/self.tu)
+        self.plot_solution()
         
+    def plot_solution(self):
         c = self.height
-        plot([self.x[0], self.x[-1]], [c, c], '--')
-        plot(self.t_x, self.t_y)
-        plot(self.x, self.y)
+        plot(self.x, self.y, label='data')
+        plot([self.x[0], self.x[-1]], [c, c], '--', label='limit')
+        plot(self.t_x, self.t_y, label='tangent')
+        legend()
+        grid()
         show()
     
 def shift_data(x, y, width):
