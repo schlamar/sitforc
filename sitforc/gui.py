@@ -14,6 +14,8 @@ matplotlib.interactive(True)
 from sitforc import load_csv, modellib
 from sitforc.core import RegressionIdentifier, ITMIdentifier, shift_data
 
+from sitforc.numlib import smooth
+
 METHOD_REGRESSION = 0
 METHOD_ITM = 1
 
@@ -44,7 +46,7 @@ class GUI(gtk.Window):
         hbox.pack_start(button)
         button.show()
         
-        label = gtk.Label('Daten verschieben:')
+        label = gtk.Label('Daten verschieben: x')
         hbox.pack_start(label, False, False, 3)
         label.show()
         
@@ -55,6 +57,34 @@ class GUI(gtk.Window):
         self.shift_spin.connect('value-changed', self.refresh)
         hbox.pack_start(self.shift_spin)
         self.shift_spin.show()
+        
+        label = gtk.Label('y')
+        hbox.pack_start(label, False, False, 3)
+        label.show()
+        
+        adj = gtk.Adjustment(value=0, lower=-100, upper=100,
+                             step_incr=0.1, page_incr=1.0)
+        self.shift_spin_y = gtk.SpinButton(adjustment=adj, climb_rate=100, 
+                                         digits=2)
+        self.shift_spin_y.connect('value-changed', self.refresh)
+        hbox.pack_start(self.shift_spin_y)
+        self.shift_spin_y.show()
+        
+#        hbox = gtk.HBox()
+#        vbox.pack_start(hbox, False, False, 0)
+#        hbox.show()
+        
+        label = gtk.Label('Interpol.:')
+        hbox.pack_start(label, False, False, 3)
+        label.show()
+        
+        adj = gtk.Adjustment(value=0, lower=0, upper=200,
+                             step_incr=1, page_incr=5)
+        self.interpolate_spin = gtk.SpinButton(adjustment=adj, climb_rate=100, 
+                                         digits=0)
+        self.interpolate_spin.connect('value-changed', self.refresh)
+        hbox.pack_start(self.interpolate_spin)
+        self.interpolate_spin.show()
         
         reg_page = self.create_reg_page()
         itm_page = self.create_itm_page()
@@ -202,8 +232,7 @@ class GUI(gtk.Window):
         if self.identifier:
             self.identifier.plot_solution()
         elif not self.data == None:
-            x, y = self.data
-            x, y = shift_data(x, y, self.shift_spin.get_value())
+            x, y = self.process_data()
             matplotlib.pyplot.plot(x, y, label='data')
             matplotlib.pyplot.legend()
             matplotlib.pyplot.grid()
@@ -218,13 +247,19 @@ class GUI(gtk.Window):
         self.ipoint_changed = True
         self.refresh()
         
+    def process_data(self):
+        x, y = self.data
+        x, y = shift_data(x, y, self.shift_spin.get_value())
+        y = y - self.shift_spin_y.get_value()
+        y = smooth(y, self.interpolate_spin.get_value_as_int()+2)
+        return x, y
+        
     def refresh(self, *args):
         if self.data == None:
             return
         fig = Figure()
         axes = fig.add_subplot(111)
-        x, y = self.data
-        x, y = shift_data(x, y, self.shift_spin.get_value())
+        x, y = self.process_data()
         axes.plot(x, y)
         
         if self.method == METHOD_REGRESSION: 
@@ -233,6 +268,8 @@ class GUI(gtk.Window):
             try:
                 model = modellib[modelname]
                 self.shift_spin.set_sensitive(False)
+                self.shift_spin_y.set_sensitive(False)
+                self.interpolate_spin.set_sensitive(False)
                 self.identifier = RegressionIdentifier(x, y, model)
                 mf = self.identifier.model_fitter
                 axes.plot(mf.x, mf.y)
@@ -242,6 +279,8 @@ class GUI(gtk.Window):
                                                       .format(value)))
             except KeyError:
                 self.shift_spin.set_sensitive(True)
+                self.shift_spin_y.set_sensitive(True)
+                self.interpolate_spin.set_sensitive(True)
                 self.identifier = None
             except TypeError, e:
                 if str(e) == 'Improper input parameters.':
@@ -252,6 +291,8 @@ class GUI(gtk.Window):
                     
         elif self.method == METHOD_ITM:
             self.shift_spin.set_sensitive(True)
+            self.shift_spin_y.set_sensitive(True)
+            self.interpolate_spin.set_sensitive(True)
             try:
                 if self.ipoint_changed:
                     num = self.ipoint_combo.get_active()

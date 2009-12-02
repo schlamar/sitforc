@@ -33,7 +33,7 @@ def modelfit(function, paramdict, x, y):
 
 import numpy
 
-def smooth(x, window_len=11, window='hanning'):
+def smooth(x, window_len=11):
     """smooth the data using a window with requested size.
     
     This method is based on the convolution of a scaled window with the signal.
@@ -74,17 +74,9 @@ def smooth(x, window_len=11, window='hanning'):
     if window_len < 3:
         return x
 
-
-    if not window in ['flat', 'hanning', 'hamming', 'bartlett', 'blackman']:
-        raise ValueError, "Window is on of 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'"
-
-
     s=numpy.r_[2*x[0]-x[window_len:1:-1], x, 2*x[-1]-x[-1:-window_len:-1]]
     #print(len(s))
-    if window == 'flat': #moving average
-        w=numpy.ones(window_len,'d')
-    else:
-        w=eval('numpy.'+window+'(window_len)')
+    w=numpy.ones(window_len,'d')
 
     y=numpy.convolve(w/w.sum(), s, mode='same')
     return y[window_len-1:-window_len+1]
