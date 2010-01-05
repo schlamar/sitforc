@@ -8,7 +8,7 @@ import ast
 
 import numlib
 
-ALLOWED_CALLS = ['fac', 'exp', 'sin']
+ALLOWED_CALLS = ['fac', 'exp', 'sin', 'cos']
 
 class ParseException(Exception):
     pass
@@ -119,15 +119,15 @@ def parse_func(funcstring):
     
     try:
         expr = ast.parse(funcstring, mode='eval')
-    except Exception, e:
+    except Exception as e:
         raise ParseException('{0}: {1} '
                              .format(e.__class__.__name__,
                                      funcstring))
     try:
         latex = expr.eval(globals(), params)
-    except ParseException, e:
+    except ParseException as e:
         raise ParseException('{0}: {1} '.format(e, funcstring))
-    except Exception, e:
+    except Exception as e:
         raise ParseException('{0}: {1} '
                              .format(e.__class__.__name__,
                                      funcstring))

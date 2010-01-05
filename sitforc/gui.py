@@ -13,7 +13,6 @@ matplotlib.interactive(True)
 
 from sitforc import load_csv, modellib
 from sitforc.core import RegressionIdentifier, ITMIdentifier, shift_data
-
 from sitforc.numlib import smooth
 
 METHOD_REGRESSION = 0
@@ -282,7 +281,7 @@ class GUI(gtk.Window):
                 self.shift_spin_y.set_sensitive(True)
                 self.interpolate_spin.set_sensitive(True)
                 self.identifier = None
-            except TypeError, e:
+            except TypeError as e:
                 if str(e) == 'Improper input parameters.':
                     #TODO: Warning
                     print 'Parameter schlecht gewählt (z.B. Verschiebung)'
@@ -317,7 +316,7 @@ class GUI(gtk.Window):
                 lstore.append(('Tg','{0:.3f}'.format(ident.tg)))
                 lstore.append(('Tu/Tg', '{0:.3f}'.format(ident.tu/ident.tg)))
                 lstore.append(('Tg/Tu', '{0:.3f}'.format(ident.tg/ident.tu)))
-            except TypeError, e:
+            except TypeError as e:
                 if str(e) == 'expected non-empty vector for x':
                     #TODO: Warning
                     print 'Parameter schlecht gewählt (z.B. Verschiebung)'

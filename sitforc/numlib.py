@@ -1,13 +1,13 @@
-'''
-Created on 16.10.2009
+#coding: utf-8
 
-Module for numeric calculations.
+'''
+Numerische Berechnungen.
 '''
 
 from scipy import optimize
 
 from math import factorial as fac
-from numpy import exp, sin
+from numpy import exp, sin, cos
 
 def generate_func(funcstring):
     return eval('lambda x,p: {0}'.format(funcstring))
@@ -34,34 +34,9 @@ def modelfit(function, paramdict, x, y):
 import numpy
 
 def smooth(x, window_len=11):
-    """smooth the data using a window with requested size.
-    
-    This method is based on the convolution of a scaled window with the signal.
-    The signal is prepared by introducing reflected copies of the signal 
-    (with the window size) in both ends so that transient parts are minimized
-    in the begining and end part of the output signal.
-    
-    input:
-        x: the input signal 
-        window_len: the dimension of the smoothing window; should be an odd integer
-        window: the type of window from 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'
-            flat window will produce a moving average smoothing.
-
-    output:
-        the smoothed signal
-       
-        
-    example:
-
-    t=linspace(-2,2,0.1)
-    x=sin(t)+randn(len(t))*0.1
-    y=smooth(x)
-    
-    see also: 
-    
-    numpy.hanning, numpy.hamming, numpy.bartlett, numpy.blackman, numpy.convolve
-    scipy.signal.lfilter
-    
+    """
+    veränderte Version von
+    http://www.scipy.org/Cookbook/SignalSmooth
     """
 
     if x.ndim != 1:

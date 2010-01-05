@@ -135,7 +135,7 @@ class ModelLibrary(object):
         folder = os.path.dirname(__file__)
         try:
             config = ConfigObj(os.path.join(folder, 'modellib.sfm'))
-        except configobj.ConfigObjError, e:
+        except configobj.ConfigObjError as e:
             raise configobj.ConfigObjError('File "modellib.sfm" has an error: {0}'
                                        .format(e))
         if not config:
@@ -159,7 +159,7 @@ class ModelLibrary(object):
                 continue
             try:
                 func, latex, ident_params = parse_func(funcstring)
-            except ParseException, e:
+            except ParseException as e:
                 warn('Function for model "{0}" in "modellib.sfm" has '
                      'an error: {1}'.format(modelname, e), 
                      SitforcWarning)
@@ -167,7 +167,7 @@ class ModelLibrary(object):
 
             try:
                 func(1, params)
-            except KeyError, e:
+            except KeyError as e:
                 warn('Param {0} for model "{1}" is not defined '
                      'in "modellib.sfm".'.format(e, modelname), 
                      SitforcWarning)
@@ -357,7 +357,7 @@ def shift_data(x, y, width):
     '''
     Verschiebt die Daten um ``width`` und schneidet die 
     Daten < 0 aus. Die Funktion wird also auf der x-Achse 
-    nach links verschoben. Funktioniert nur für positive Werte.
+    nach links verschoben.
     
     Kann beispielsweise verwendet werden, wenn der Sprung 
     nicht zum Zeitpunkt t=0 auf das System gegeben wurde,

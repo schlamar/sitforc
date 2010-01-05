@@ -5,7 +5,7 @@ Library for symbolic calculations.
 '''
 
 from sympy import factorial as fac
-from sympy import exp, sin
+from sympy import exp, sin, cos
 
 from sympy import Symbol, diff
 
