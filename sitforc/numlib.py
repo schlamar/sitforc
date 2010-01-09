@@ -4,8 +4,8 @@
 Numerische Berechnungen.
 '''
 
+import numpy
 from scipy import optimize
-
 from math import factorial as fac
 from numpy import exp, sin, cos
 
@@ -15,7 +15,7 @@ def generate_func(funcstring):
 def modelfit(function, paramdict, x, y):
     '''
     Fits the parameters of the function to the given
-    data using the least square 
+    data using the least square.
     '''
     params = [paramdict[key] for key in sorted(paramdict.keys())]
     
@@ -26,12 +26,9 @@ def modelfit(function, paramdict, x, y):
     def f_error(params):
         fill_pdict(params)
         return y - function(x, paramdict)
-    # REPORT: Function equivalent to MATLAB ``lsqcurvefit``
     params, success = optimize.leastsq(f_error, params) 
     fill_pdict(params)
-    return success
-
-import numpy
+    return (success in range(1,5))
 
 def smooth(x, window_len=11):
     """

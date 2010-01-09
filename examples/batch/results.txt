@@ -1,0 +1,28 @@
+File: rc_data.csv
+Params for PT-2 Model: {'c': 5.0064927726628712, 't2': 2.3817537145959378, 't1': 0.96547069667002849}
+Params for ITM
+Tu		0.415
+Tg		4.389
+Tu/Tg		0.095
+
+File: temperature.csv
+Params for PT-2 Model: {'c': 6.625144345359967, 't2': 59.827289607829158, 't1': 13.94323195079877}
+Params for ITM
+Tu		7.829
+Tg		94.799
+Tu/Tg		0.083
+
+File: water_flow.csv
+Params for PT-2 Model: {'c': 9.7930745504440484, 't2': 0.36093894085218942, 't1': 0.36091580345511737}
+Params for ITM
+Tu		0.149
+Tg		0.895
+Tu/Tg		0.167
+
+File: water_level.csv
+Params for PT-2 Model: {'c': 6.4986284209332901, 't2': 50.577623850312477, 't1': 3.6716835400206817e-07}
+Params for ITM
+Tu		2.396
+Tg		43.269
+Tu/Tg		0.055
+

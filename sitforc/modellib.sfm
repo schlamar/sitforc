@@ -19,11 +19,10 @@ func = p["height"] * ( 1 - exp(-((x-p["mu"])/p["sigma"])**2))
 mu = 3.0
 sigma = 5.0
 height = 8.0
-[pt2]
-func = p["c"] * (1 - (( p["t1"]*exp(-(x/p["t1"])) ) / (p["t1"] - p["t2"]) - (p["t2"]*exp(-(x/p["t2"])) ) / (p["t1"] - p["t2"]) ) )
+[pt2_sim]
+func = p["c"] * (1 - exp(-(x/p["t"]))  * ( 1 + (x/p["t"])**1 / fac(1) ) )
 c = 10.0
-t2 = 1.0
-t1 = 0.5
+t = 0.6
 [exp_approach]
 func = p["c"] * (1 - exp(-((x-p["dx"])/p["t"])))
 c = 10.0
@@ -35,12 +34,13 @@ c = 5.0
 t2 = 1.0
 t3 = 2.2
 t1 = 0.64
-[pt2_sim]
-func = p["c"] * (1 - exp(-(x/p["t"]))  * ( 1 + (x/p["t"])**1 / fac(1) ) )
+[pt2]
+func = p["c"] * (1 - (( p["t1"]*exp(-(x/p["t1"])) ) / (p["t1"] - p["t2"]) - (p["t2"]*exp(-(x/p["t2"])) ) / (p["t1"] - p["t2"]) ) )
 c = 10.0
-t = 0.6
+t2 = 1.0
+t1 = 0.5
 [pt1]
 func = p["c"] * (1 - exp(-(x/p["t"])))
-c = 10.0
+c = 5.0
 t = 0.5
 comment = Sprungantwort eines PT1-Gliedes

@@ -112,9 +112,6 @@ class ModelLibrary(object):
         models = '\n\n'.join((str(self.lib[k]) for k in sorted(self.lib)))
         return ('\n\n{0}\n\n'.format(models)
                 .join(['**** Model Library of SITforC *****'] * 2))
-        
-    def __call__(self, name):
-        return self.lib[name]
     
     def __getattr__(self, name):
         return self.lib[name]

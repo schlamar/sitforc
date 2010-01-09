@@ -10,7 +10,7 @@ class TestFuncparser(unittest.TestCase):
         funcstring = 'open("/etc/passwd").read()' # try injection
         self.assertRaises(ParseException, parse_func, funcstring)
         
-        funcstring = '(2 + 3' # general syntax error
+        funcstring = '(2.3 + 3' # general syntax error
         self.assertRaises(ParseException, parse_func, funcstring)
         
         funcstring = '2 * x + 3 * y' # using not allowed keyword (1)
