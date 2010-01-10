@@ -117,8 +117,7 @@ def parse_func(funcstring):
     @return: Tuple mit 3 Elementen
         1) Die generierte lambda-Funktion.
         2) Der erstellte LaTeX-Ausdruck.
-        3) Eine Liste mit den Namen aller 
-           identifizierten Parametern.
+        3) Eine Liste mit den Namen aller identifizierten Parametern.
     '''
     params = dict()
     

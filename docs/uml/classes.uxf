@@ -150,4 +150,4 @@ _+generate_sym_func(funcstring: str, p: dict)_
 _+diff_func(sym_func): sym_func_</panel_attributes><additional_attributes/></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>299</x><y>337</y><w>142</w><h>56</h></coordinates><panel_attributes>lt=-&gt;
 m1=*
 m2=1
-&lt;uses</panel_attributes><additional_attributes>121;33;9;33</additional_attributes></element></umlet_diagram>
+&lt;uses</panel_attributes><additional_attributes>121;33;9;33</additional_attributes></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>269</x><y>900</y><w>592</w><h>40</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>571;20;19;20</additional_attributes></element></umlet_diagram>

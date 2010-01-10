@@ -158,7 +158,7 @@ class ModelFitter(Fitter):
     '''
     CurveFitting mit einem Regressionsmodell.
     Genauere Erläuterungen zur Verwendung von Modellen 
-    finden sich unter L{core.Model} und L{core.ModelLibrary).
+    finden sich unter L{core.Model} und L{core.ModelLibrary}.
     '''
     def __init__(self, x, y, model, **params):
         Fitter.__init__(self, x, y)

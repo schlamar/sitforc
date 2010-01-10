@@ -7,7 +7,7 @@ import sys
 from sitforc import modellib, load_csv
 from sitforc.core import RegressionIdentifier, ITMIdentifier
 
-#Öffne Datei zum Lesen
+#Öffne Datei zum Schreiben
 with open('results.txt', 'w') as f_out: 
     #Standardausgabe in Datei lenken
     sys.stdout = f_out
