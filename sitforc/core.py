@@ -16,6 +16,9 @@ from warnings import warn
 import numpy
 import configobj
 from configobj import ConfigObj
+
+import matplotlib
+matplotlib.use('GTKAgg')
 from matplotlib.pyplot import (figure, legend, grid, text, show,
                                subplot, plot)
 
