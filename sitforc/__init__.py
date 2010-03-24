@@ -3,7 +3,7 @@
 '''
 "SITforC" stands for System Identification 
 Toolkit for Control theory. This package provides
-methods for identifying a control system by 
+a GUI for identifying a control system by 
 experimental data.
 '''
 

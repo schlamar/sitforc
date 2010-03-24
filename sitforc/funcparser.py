@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 '''
-Funktionsparser
+Function parser.
 '''
 
 from __future__ import division
@@ -17,7 +17,7 @@ class ParseException(Exception):
 
 class parse_rules:
     '''
-    Enthält die Regeln für das Parsen.
+    These are the rules for parsing.
     '''
     def __init__(self):
         raise ParseException('Cannot instantiate the parser class')
@@ -113,11 +113,11 @@ parse_rules.install()
 
 def parse_func(funcstring):
     '''
-    Parst eine Funktion.
-    @return: Tuple mit 3 Elementen
-        1) Die generierte lambda-Funktion.
-        2) Der erstellte LaTeX-Ausdruck.
-        3) Eine Liste mit den Namen aller identifizierten Parametern.
+    Parses a function provided as string.
+    @return: Tuple with 3 elements
+        1) Generated lambda-function.
+        2) Created LaTeX expression.
+        3) A list containing the names of the identified parameters.
     '''
     params = dict()
     

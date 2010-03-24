@@ -1,6 +1,6 @@
 # coding: utf-8
 '''
-GUI für SITforC
+GUI for SITforC
 '''
 
 import gtk
@@ -40,12 +40,12 @@ class GUI(gtk.Window):
         vbox.pack_start(hbox, False, False, 0)
         hbox.show()
         
-        button = gtk.Button('CSV laden')
+        button = gtk.Button('Load CSV')
         button.connect('clicked', self.load_data)
         hbox.pack_start(button)
         button.show()
         
-        label = gtk.Label('Daten verschieben: x')
+        label = gtk.Label('Shift data: x')
         hbox.pack_start(label, False, False, 3)
         label.show()
         
@@ -95,7 +95,7 @@ class GUI(gtk.Window):
                                          gtk.Label('Regression'),
                                          METHOD_REGRESSION)
         self.method_notebook.insert_page(itm_page, 
-                                         gtk.Label('Wendetangente'),
+                                         gtk.Label('Inflectional tangent'),
                                          METHOD_ITM)
         vbox.pack_start(self.method_notebook, False, False, 3)
         self.method_notebook.show()
@@ -130,7 +130,7 @@ class GUI(gtk.Window):
         reg_page.pack_start(hbox, False, False, 0)
         hbox.show()
         
-        label = gtk.Label('Modell auswählen:')
+        label = gtk.Label('Choose regression model:')
         hbox.pack_start(label)
         label.show()
         
@@ -142,7 +142,7 @@ class GUI(gtk.Window):
         hbox.pack_start(self.model_combo)
         self.model_combo.show()
         
-        button = gtk.Button('Modell anzeigen')
+        button = gtk.Button('Show model')
         button.connect('clicked', self.show_model)
         hbox.pack_start(button, False, False, 3)
         button.show()
@@ -162,7 +162,7 @@ class GUI(gtk.Window):
                                     text=0)
         column.set_sort_column_id(0)
         view.append_column(column)
-        column = gtk.TreeViewColumn('Wert', gtk.CellRendererText(), 
+        column = gtk.TreeViewColumn('Value', gtk.CellRendererText(), 
                                     text=1)
         column.set_sort_column_id(1)
         view.append_column(column)
@@ -179,7 +179,7 @@ class GUI(gtk.Window):
         itm_page.pack_start(table, True, False, 3)
         table.show()
         
-        label = gtk.Label('Polynomgrad:')
+        label = gtk.Label('Polynomial degree:')
         table.attach(label, 0, 1, 0, 1)
         label.show()
         
@@ -190,7 +190,7 @@ class GUI(gtk.Window):
         table.attach(self.poly_degree_spin, 1, 2, 0, 1)
         self.poly_degree_spin.show()
         
-        label = gtk.Label('Wendestelle:')
+        label = gtk.Label('Point of inflection:')
         table.attach(label, 0, 1, 1, 2)
         label.show()
         
@@ -220,7 +220,7 @@ class GUI(gtk.Window):
                                     text=0)
         column.set_sort_column_id(0)
         view.append_column(column)
-        column = gtk.TreeViewColumn('Wert', gtk.CellRendererText(), 
+        column = gtk.TreeViewColumn('Value', gtk.CellRendererText(), 
                                     text=1)
         column.set_sort_column_id(1)
         view.append_column(column)
@@ -284,7 +284,7 @@ class GUI(gtk.Window):
             except TypeError as e:
                 if str(e) == 'Improper input parameters.':
                     #TODO: Warning
-                    print 'Parameter schlecht gewählt (z.B. Verschiebung)'
+                    print 'Parameters are badly chosen (e.g. by shifting)'
                 else:
                     raise
                     
@@ -319,7 +319,7 @@ class GUI(gtk.Window):
             except TypeError as e:
                 if str(e) == 'expected non-empty vector for x':
                     #TODO: Warning
-                    print 'Parameter schlecht gewählt (z.B. Verschiebung)'
+                    print 'Parameters are badly chosen (e.g. by shifting)'
                 else:
                     raise
                 

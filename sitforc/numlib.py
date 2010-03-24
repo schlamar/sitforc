@@ -1,7 +1,7 @@
 #coding: utf-8
 
 '''
-Numerische Berechnungen.
+Numeric calculations.
 '''
 
 import numpy
@@ -32,7 +32,7 @@ def modelfit(function, paramdict, x, y):
 
 def smooth(x, window_len=11):
     """
-    veränderte Version von
+    Edited from
     http://www.scipy.org/Cookbook/SignalSmooth
     """
 

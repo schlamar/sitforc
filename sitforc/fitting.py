@@ -1,10 +1,9 @@
 # coding: utf-8
 
 '''
-Dieses Modul enthält Klassen für das CurveFitting.
-Es stehen ein polynomischer Fitter (L{PolyFitter}) und
-ein Fitter für die Regressionsmodelle (L{ModelFitter}) zur
-Verfügung.
+This module provides classes for curve fitting.
+There are a polynomial fitter (L{PolyFitter}) and
+a fitter for regression models (L{ModelFitter}).
 '''
 
 from abc import ABCMeta, abstractmethod
@@ -16,21 +15,20 @@ from sitforc import numlib, symlib
 
 class Fitter(object):
     '''
-    Abstrakte Basisklasse (ABC steht für
-    AbstractBaseClass) für das CurveFitting.
+    Abstract base class for curve fitting.
     '''
     __metaclass__ = ABCMeta
     def __init__(self, x, y):
         self.data = x, y
         self.data_cache = dict()
         '''
-        Für jede berechnete Ableitung wird in diesem Dictionary 
-        ein Dictionary mit der Nummer der Ableitung 
-        als Key angelegt. Dieses "innere" Dictionary
-        speichert das Python-Objekt (Key "obj"), das die 
-        gefittete Funktion darstellt, eine String-Repräsentation 
-        (Key "repr") dieses Objekts und alle berechneten 
-        Funktionswerte (Key "values") für diese Ableitung.
+        A dictionary will be generated for each calculated derivative  
+        with the number of the derivation
+        as key. This dictionary
+        stores the Python object (Key "obj"), which represents the  
+        fitted function, a representation as string 
+        (Key "repr") for this object and the calculated
+        values (Key "values").
         '''
         
     @property
@@ -44,16 +42,14 @@ class Fitter(object):
     def y(self):
         '''
         Property.
-        Gibt die Funktionswerte der nullten Ableitung 
-        (der gefitteten Funktion) zurück.
+        @return: Values of 0th derivation (fitted function).
         '''
         return self.data_cache[0]['values']
     
     def _fill_cache(self, n, obj, values, repr_str):
         '''
-        Schreibt die Daten in den Cache.
-        Siehe L{Fitter.data_cache} für genauere 
-        Informationen.
+        Write the data into the cache.
+        See L{Fitter.data_cache} for more information.
         '''
         self.data_cache[n] = dict()
         self.data_cache[n]['obj'] = obj
@@ -63,30 +59,28 @@ class Fitter(object):
     @abstractmethod
     def _derivate(self, n):
         '''
-        Berechnet die 3 Werte der n-ten Ableitung 
-        (s. L{Fitter.data_cache}).
+        Calculates the 3 cache values of the n-th derivation 
+        (see L{Fitter.data_cache}).
         '''
         pass
     
     def repr_func(self, n=0):
         '''
-        Gibt die String-Repräsentation der n-ten Ableitung 
-        zurück.
+        @return: String representation of n-th derivation.
         '''
         self._derivate(n)
         return self.data_cache[n]['repr']
     
     def get_values(self, n=0):
         '''
-        Gibt die Funktionswerte der n-ten Ableitung 
-        zurück.
+        @return: Values of n-th derivation.
         '''
         self._derivate(n)
         return self.data_cache[n]['values']
     
 class PolyFitter(Fitter):
     '''
-    Klasse zum polynomischen CurveFitting.
+    Class for polynomial curve fitting.
     '''
     def __init__(self, x, y, degree):
         Fitter.__init__(self, x, y)
@@ -103,22 +97,11 @@ class PolyFitter(Fitter):
     def degree(self):
         '''
         Property.
-        Grad der polynomischen Näherungskurve.
-        Das ist die Anzahl der Koeffizienten der nullten
-        Ableitung - 1.
+        Degree of the approximated polynomial curve.
         '''
         return len(self.data_cache[0]['obj']) - 1
         
     def _derivate(self, n):
-        '''
-        Berechnet die Werte der n-ten Ableitung.
-        Hier kommt der Nutzen des Datencaches (L{Fitter.data_cache}) 
-        zum Vorschein. Falls n noch nicht im Cache ist, wird
-        die größte Ableitung m im Cache gesucht, die kleiner als n
-        ist. Wenn man nun die m-te Ableitung (n-m) mal ableitet, 
-        ist dies die n-te Ableitung der Ausgangsfunktion, allerdings
-        mit weniger Rechenaufwand.
-        '''
         if n not in self.data_cache:
             m = max((d for d in self.data_cache if d < n))
             coeffs_m = self.data_cache[m]['obj']
@@ -131,8 +114,9 @@ class PolyFitter(Fitter):
     
     def get_inflec_points(self):
         '''
-        Berechnet alle (realen) Wendepunkte
-        im Bereich von x.
+        Calculates the points of inflection
+        in the range of x. Points with
+        imaginary part are skipped.
         '''
         coeffs = self.data_cache[0]['obj']
         self._derivate(1)
@@ -156,9 +140,9 @@ class PolyFitter(Fitter):
     
 class ModelFitter(Fitter):
     '''
-    CurveFitting mit einem Regressionsmodell.
-    Genauere Erläuterungen zur Verwendung von Modellen 
-    finden sich unter L{core.Model} und L{core.ModelLibrary}.
+    Curve fitting with a regression model.
+    See L{core.Model} and L{core.ModelLibrary}
+    for more information about using regression models.
     '''
     def __init__(self, x, y, model, **params):
         Fitter.__init__(self, x, y)

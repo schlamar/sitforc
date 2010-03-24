@@ -1,9 +1,8 @@
 #coding: utf-8
 
 '''
-Enthält Klassen und Methoden für die Identifikation
-von gegebenen Daten und zum Anzeigen, Ändern und 
-Erstellen von Regressionsmodellen.
+Classes and functions for the identification
+and for working with regression models.
 '''
 
 
@@ -30,11 +29,11 @@ class SitforcWarning(Warning):
 
 class Model(object):
     '''
-    Diese Klasse stellt ein Regressionsmodell dar. Das Modell
-    ist dabei als String einer mathematischen Funktion
-    hinterlegt, dabei wird die Syntax von Python verwendet.
-    Dieser String wird geparst und mit Hilfe der "eval"-Funktion
-    zu einer echten (lambda-)Funktion evaluiert.
+    This class represents a regression model.
+    The model itself is a string of a
+    mathematical function (using Python syntax).
+    This string is parsed and evaluated to a
+    "real" (lambda-) function.
     '''
     def __init__(self, name, func, funcstring, latex, **params):
         self.name = name
@@ -44,19 +43,18 @@ class Model(object):
         self.latex = latex
         self.comment = ''
         
-    def __call__(self, x, *p, **p_kws):
+    def __call__(self, x, p=None, **p_kws):
         '''
-        Ruft die Funktion mit den übergebenen
-        x-Werten auf. Die Parameter können entweder als
-        Dictionary übergeben werden oder als
-        Keyword-Parameter. Wenn keine Parameter übergeben
-        werden, wird die Funktion mit den Default-Werten
-        aufgerufen.
+        Calls the function with the given x
+        values. Parameters can be passed as a 
+        dictionary or as keyword parameters.
+        If no parameters are delivered, the 
+        default parameters are used. 
         '''
         if p:
-            return self.func(x, p[0])
+            return self.func(x, p)
         elif p_kws:
-            params =  dict(self.default_params)
+            params = dict(self.default_params)
             params.update(p_kws)
             return self.func(x, params)
         else:
@@ -70,42 +68,45 @@ class Model(object):
         
     def set_default_params(self, **params):
         '''
-        Ändert die Default-Parameter für dieses Model.
+        Changes the default parameters for this model.
         '''
         self.default_params.update(params)
         
     def show(self):
         '''
-        Zeigt die Modelfunktion in einem Fenster. 
+        Shows the function of the model in a seperate window. 
         
-        Dafür wird der generatierte LaTeX-String automatisch
-        gerendert.
+        Therefore the LaTeX representation is automatically
+        rendered.
         '''
         figure(figsize=(10, 2))
         subplot(111, frameon=False, xticks=[], yticks=[])
         text(0.5, 0.5, self.latex, fontsize=30, horizontalalignment='center')
-        #show()
         
     def plot(self, x=None):
-        if x == None:
+        '''
+        Plots the curve of the model from [0..10] if
+        x is not passed.
+        '''
+        
+        if not x:
             x = numpy.arange(0, 10, 0.1)
         figure()
         plot(x, self(x))
         show()
 
         
-# REPORT: explain why not implemented as singleton
 class ModelLibrary(object):
     '''
-    Diese Klasse beinhaltet alle definierten 
-    Regressionsmodelle, die in der Datei "modellib.sfm"
-    hinterlegt sind. Es können weitere Modelle hinzugefügt
-    werden und in der Datei abgespeichert werden.
+    This class contains the regression
+    models, which are defined in the file
+    "modellib.sfm". New models can be added
+    and saved into this file.
     
-    Hinweis: Diese Klasse ist als Singleton zu betrachten.
-    Es darf keine Instanz dieser Klasse erzeugt werden, 
-    stattdessen sollte man das Attribut "modellib" 
-    dieses Moduls verwenden.
+    Hint: See this class as singleton. Don't
+    instantiate it. Use the attribute "modellib"
+    of this module if you want to work with 
+    the model library.
     '''
     def __init__(self):
         self.lib = dict()
@@ -130,14 +131,14 @@ class ModelLibrary(object):
     
     def _load(self):
         '''
-        Lädt die definierten Modelle in der Datei "modellib.sfm".
+        Loads the defined models from "modellib.sfm".
         '''
         folder = os.path.dirname(__file__)
         try:
             config = ConfigObj(os.path.join(folder, 'modellib.sfm'))
         except configobj.ConfigObjError as e:
-            raise configobj.ConfigObjError('File "modellib.sfm" has an error: {0}'
-                                       .format(e))
+            txt = 'File "modellib.sfm" has an error: {0}'.format(e)
+            raise configobj.ConfigObjError(txt)
         if not config:
             warn('File "modellib.sfm" could not read or is empty. '
                  'No models in modellib.', SitforcWarning)
@@ -180,15 +181,14 @@ class ModelLibrary(object):
             
     def reset(self):
         '''
-        Setzt die Bibliothek zurück auf den Stand
-        des letzten Speichervorgangs.
+        Reset the library to the last saved state.
         '''
         self.lib = dict()
         self._load()
         
     def save(self):
         '''
-        Speichert die Bibliothek.
+        Saves the library.
         '''
         config = ConfigObj()
         folder = os.path.dirname(__file__)
@@ -204,7 +204,7 @@ class ModelLibrary(object):
     
     def new_model(self, name, func, funcstring, latex, **params):
         '''
-        Legt ein neues Modell in der Bibliothek an.
+        Adds a new model to the library.
         '''
         model = Model(name, func, funcstring, latex, **params)
         if name not in self.lib:
@@ -218,8 +218,7 @@ modellib = ModelLibrary()
 
 class Identifier(object):
     '''
-    Abstrakte Basisklasse zum Identifizieren
-    von Daten.
+    Abstract base class for identifying data.
     '''
     __metaclass__ = ABCMeta
     def __init__(self, x, y):
@@ -236,16 +235,22 @@ class Identifier(object):
             
     @abstractmethod
     def show_solution(self):
+        '''
+        Print result and show plot.
+        '''
         pass
     
     @abstractmethod
     def plot_solution(self):
+        '''
+        Plots the data and fitted curve to
+        a separate figure window.
+        '''
         pass
     
 class RegressionIdentifier(Identifier):
     '''
-    Klasse zum Identifizieren von Daten mit einem
-    Regressionsmodell.
+    Identifies data with a regression model.
     '''
     def __init__(self, x, y, model):
         Identifier.__init__(self, x, y)
@@ -255,8 +260,8 @@ class RegressionIdentifier(Identifier):
     def show_solution(self):
         mf = self.model_fitter
         
-        print ('Die Parameter des Modells "{0}" mit der Funktion in Fig. 1 '
-               'wurden an folgende Werte angenaehert:\n{1}').format(
+        print ('The Parameters of the model "{0}" with the function in Fig. 1 '
+               'were approximated to:\n{1}').format(
                 mf.model.name, mf.params)
         modellib[mf.model.name].show()
         self.plot_solution()
@@ -271,6 +276,9 @@ class RegressionIdentifier(Identifier):
         show()
         
 class ITMIdentifier(Identifier):
+    '''
+    Identifies data with the inflectional tangent method.
+    '''
     def __init__(self, x, y, degree):
         Identifier.__init__(self, x, y)
         
@@ -282,14 +290,14 @@ class ITMIdentifier(Identifier):
     @property    
     def t_x(self):
         ''' 
-        x-Werte der Tangente
+        x-values of the tangent.
         '''
         return numpy.arange(self.death_time, self.end_time, 0.1)
     
     @property    
     def t_y(self):
         '''
-        y-Werte der Tangente
+        y-values of the tangent.
         '''
         m = self.tangent_slope
         b = self.tangent_offset
@@ -304,11 +312,14 @@ class ITMIdentifier(Identifier):
         return self.end_time - self.death_time
         
     def calculate_inflec_point(self, num):
-        # Jedes Tuple in i_points enthält, den x und y-Wert
-        # sowie die Steigung
+        '''
+        Calculates the point of inflection.
+        '''
+        # Each tuple in i_points contains the x and y-value
+        # plus the slope
         x, y, m = self.i_points[num]
         
-        # Tangentenform "mx + b = y"
+        # tangential form: "mx + b = y"
         b = y - m*x
         self.death_time = -b/m
         self.tangent_slope = m
@@ -324,6 +335,10 @@ class ITMIdentifier(Identifier):
         self.end_time = (self.height - b) / m
         
     def _calculate_split_point(self, begin):
+        '''
+        Calculate a useful point, where the tangent should stop
+        and the exponential function begin.
+        '''
         delta = 0.1
         x = self.poly_fitter.x
         y = self.poly_fitter.get_values(1)
@@ -337,7 +352,7 @@ class ITMIdentifier(Identifier):
     def show_solution(self):
         m = self.tangent_slope
         b = self.tangent_offset
-        print 'Tangente: {0}x + {1}'.format(m, b)
+        print 'Tangent: {0}x + {1}'.format(m, b)
         print 'Tu: {0}'.format(self.tu)
         print 'Tg: {0}'.format(self.tg)
         print 'Tu/Tg: {0}'.format(self.tu/self.tg)
@@ -355,24 +370,27 @@ class ITMIdentifier(Identifier):
     
 def shift_data(x, y, width):
     '''
-    Verschiebt die Daten um ``width`` und schneidet die 
-    Daten < 0 aus. Die Funktion wird also auf der x-Achse 
-    nach links verschoben.
-    
-    Kann beispielsweise verwendet werden, wenn der Sprung 
-    nicht zum Zeitpunkt t=0 auf das System gegeben wurde,
-    sondern erst später.
+    Shifts the data by "width" and cuts all values
+    with x < 0. Use this function if the step response does
+    not begin at t=0.
     '''    
     i = numpy.nonzero(x > width)
     return x[i] - width, y[i]
 
 def identify_reg(x, y, model, shift=0.0):
+    '''
+    Processes regression model identifying.
+    '''
     if shift > 0:
         x, y = shift_data(x, y, shift)
     ri = RegressionIdentifier(x, y, model)
     ri.show_solution()
     
 def identify_itm(x, y, degree=11, shift=0.0):
+    '''
+    Processes the identification with the
+    inflectional tangent method.
+    '''
     if shift > 0:
         x, y = shift_data(x, y, shift)
     itmi = ITMIdentifier(x, y, degree)
@@ -380,8 +398,8 @@ def identify_itm(x, y, degree=11, shift=0.0):
 
 def _convert_excel_float(value):
     return float(value.replace(',', '.'))  
+
 load_csv = partial(numpy.loadtxt, delimiter=';', unpack=True, 
                    converters = {0: _convert_excel_float, 
                                  1: _convert_excel_float} )
-#TODO: kommentare
         

@@ -43,4 +43,4 @@ t1 = 0.5
 func = p["c"] * (1 - exp(-(x/p["t"])))
 c = 5.0
 t = 0.5
-comment = Sprungantwort eines PT1-Gliedes
+comment = Step response of a first-order time-delay element
