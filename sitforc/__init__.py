@@ -1,10 +1,12 @@
 # encoding: utf-8
 
 '''
-"SITforC" stands for System Identification 
-Toolkit for Control theory. This package provides
-a GUI for identifying a control system by 
-experimental data.
+SITforC stands for System Identification Toolkit for 
+Control theory. It is a simple, but powerful open-source 
+application to identify a control system by experimental 
+data.
+
+Website: http://sitforc.ms4py.org/
 '''
 
 __author__ = 'Marc Schlaich'
