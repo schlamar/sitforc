@@ -15,8 +15,9 @@ from sitforc import load_csv, modellib
 from sitforc.core import RegressionIdentifier, ITMIdentifier, shift_data
 from sitforc.numlib import smooth
 
-METHOD_REGRESSION = 0
-METHOD_ITM = 1
+METHOD_CORRECTION = 0
+METHOD_REGRESSION = 1
+METHOD_ITM = 2
 
 class GUI(gtk.Window):
     def __init__(self):
@@ -40,57 +41,38 @@ class GUI(gtk.Window):
         vbox.pack_start(hbox, False, False, 0)
         hbox.show()
         
-        button = gtk.Button('Load CSV')
+        button = gtk.Button()
+        box1 = gtk.HBox(False, 0)
+        box1.set_border_width(2)
+
+        image = gtk.Image()
+        image.set_from_stock(gtk.STOCK_OPEN, gtk.ICON_SIZE_SMALL_TOOLBAR)
+
+        label = gtk.Label('Load CSV')
+   
+        box1.pack_start(image, False, False, 3)
+        box1.pack_start(label, False, False, 3)
+
+        image.show()
+        label.show()
+        box1.show()
+
         button.connect('clicked', self.load_data)
-        hbox.pack_start(button)
+        button.add(box1)
+        hbox.pack_start(button, True, False)
         button.show()
         
-        label = gtk.Label('Shift data: x')
-        hbox.pack_start(label, False, False, 3)
-        label.show()
         
-        adj = gtk.Adjustment(value=0, lower=-100, upper=100,
-                             step_incr=0.1, page_incr=1.0)
-        self.shift_spin = gtk.SpinButton(adjustment=adj, climb_rate=100, 
-                                         digits=2)
-        self.shift_spin.connect('value-changed', self.refresh)
-        hbox.pack_start(self.shift_spin)
-        self.shift_spin.show()
-        
-        label = gtk.Label('y')
-        hbox.pack_start(label, False, False, 3)
-        label.show()
-        
-        adj = gtk.Adjustment(value=0, lower=-100, upper=100,
-                             step_incr=0.1, page_incr=1.0)
-        self.shift_spin_y = gtk.SpinButton(adjustment=adj, climb_rate=100, 
-                                         digits=2)
-        self.shift_spin_y.connect('value-changed', self.refresh)
-        hbox.pack_start(self.shift_spin_y)
-        self.shift_spin_y.show()
-        
-#        hbox = gtk.HBox()
-#        vbox.pack_start(hbox, False, False, 0)
-#        hbox.show()
-        
-        label = gtk.Label('Interpol.:')
-        hbox.pack_start(label, False, False, 3)
-        label.show()
-        
-        adj = gtk.Adjustment(value=0, lower=0, upper=200,
-                             step_incr=1, page_incr=5)
-        self.interpolate_spin = gtk.SpinButton(adjustment=adj, climb_rate=100, 
-                                         digits=0)
-        self.interpolate_spin.connect('value-changed', self.refresh)
-        hbox.pack_start(self.interpolate_spin)
-        self.interpolate_spin.show()
-        
+        corr_page = self.create_corr_page()
         reg_page = self.create_reg_page()
         itm_page = self.create_itm_page()
         
         self.method_notebook = gtk.Notebook()
         self.method_notebook.connect('switch-page', self.nb_page_switch)
         self.method_notebook.set_border_width(3)
+        self.method_notebook.insert_page(corr_page, 
+                                         gtk.Label('Data correction'),
+                                         METHOD_CORRECTION)
         self.method_notebook.insert_page(reg_page, 
                                          gtk.Label('Regression'),
                                          METHOD_REGRESSION)
@@ -121,6 +103,57 @@ class GUI(gtk.Window):
         self.recreate_canvas(fig)
         
         self.show()
+        
+    def create_corr_page(self):
+        page = gtk.VBox()
+        page.show()
+        page.set_border_width(3)
+        
+        hbox = gtk.HBox()
+        page.pack_start(hbox, False, False, 5)
+        hbox.show()
+        
+        label = gtk.Label('Shift data: x')
+        hbox.pack_start(label, False, False, 3)
+        label.show()
+        
+        adj = gtk.Adjustment(value=0, lower=-100, upper=100,
+                             step_incr=0.1, page_incr=1.0)
+        self.shift_spin = gtk.SpinButton(adjustment=adj, climb_rate=100, 
+                                         digits=2)
+        self.shift_spin.connect('value-changed', self.refresh)
+        hbox.pack_start(self.shift_spin, False, False, 3)
+        self.shift_spin.show()
+        
+        label = gtk.Label('y')
+        hbox.pack_start(label, False, False, 3)
+        label.show()
+        
+        adj = gtk.Adjustment(value=0, lower=-100, upper=100,
+                             step_incr=0.1, page_incr=1.0)
+        self.shift_spin_y = gtk.SpinButton(adjustment=adj, climb_rate=100, 
+                                         digits=2)
+        self.shift_spin_y.connect('value-changed', self.refresh)
+        hbox.pack_start(self.shift_spin_y, False, False, 3)
+        self.shift_spin_y.show()
+        
+        hbox = gtk.HBox()
+        page.pack_start(hbox, False, False, 5)
+        hbox.show()
+        
+        label = gtk.Label('Interpol.:')
+        hbox.pack_start(label, False, False, 3)
+        label.show()
+        
+        adj = gtk.Adjustment(value=0, lower=0, upper=200,
+                             step_incr=1, page_incr=5)
+        self.interpolate_spin = gtk.SpinButton(adjustment=adj, climb_rate=100, 
+                                         digits=0)
+        self.interpolate_spin.connect('value-changed', self.refresh)
+        hbox.pack_start(self.interpolate_spin, False, False, 3)
+        self.interpolate_spin.show()
+        
+        return page
         
     def create_reg_page(self):
         reg_page = gtk.VBox()
@@ -266,9 +299,9 @@ class GUI(gtk.Window):
             self.params_lstore.clear()
             try:
                 model = modellib[modelname]
-                self.shift_spin.set_sensitive(False)
-                self.shift_spin_y.set_sensitive(False)
-                self.interpolate_spin.set_sensitive(False)
+                #self.shift_spin.set_sensitive(False)
+                #self.shift_spin_y.set_sensitive(False)
+                #self.interpolate_spin.set_sensitive(False)
                 self.identifier = RegressionIdentifier(x, y, model)
                 mf = self.identifier.model_fitter
                 axes.plot(mf.x, mf.y)
@@ -277,9 +310,9 @@ class GUI(gtk.Window):
                     self.params_lstore.append((param, '{0:.3f}'
                                                       .format(value)))
             except KeyError:
-                self.shift_spin.set_sensitive(True)
-                self.shift_spin_y.set_sensitive(True)
-                self.interpolate_spin.set_sensitive(True)
+                #self.shift_spin.set_sensitive(True)
+                #self.shift_spin_y.set_sensitive(True)
+                #self.interpolate_spin.set_sensitive(True)
                 self.identifier = None
             except TypeError as e:
                 if str(e) == 'Improper input parameters.':
@@ -289,9 +322,9 @@ class GUI(gtk.Window):
                     raise
                     
         elif self.method == METHOD_ITM:
-            self.shift_spin.set_sensitive(True)
-            self.shift_spin_y.set_sensitive(True)
-            self.interpolate_spin.set_sensitive(True)
+            #self.shift_spin.set_sensitive(True)
+            #self.shift_spin_y.set_sensitive(True)
+            #self.interpolate_spin.set_sensitive(True)
             try:
                 if self.ipoint_changed:
                     num = self.ipoint_combo.get_active()
