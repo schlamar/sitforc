@@ -141,7 +141,7 @@ class GUI(gtk.Window):
         page.pack_start(hbox, False, False, 5)
         hbox.show()
         
-        label = gtk.Label('Interpol.:')
+        label = gtk.Label('Interpolation:')
         hbox.pack_start(label, False, False, 3)
         label.show()
         
