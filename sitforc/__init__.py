@@ -10,7 +10,7 @@ Website: http://sitforc.ms4py.org/
 '''
 
 __author__ = 'Marc Schlaich'
-__version__ = '0.2.0'
+__version__ = '0.2.1'
 __license__ = 'MIT'
 
 from core import modellib, load_csv, identify_reg, identify_itm
