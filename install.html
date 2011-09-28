@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>SITforC - Installation</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="description" content="SITforC stands for System Identification Toolkit for Control theory. It is a simple but powerful open-source application to identify a control system by experimental data." />
+<link rel="stylesheet" href="static/style.css" type="text/css" />
+<link rel="stylesheet" href="static/pygments.css" type="text/css" />
+</head>
+
+<body>
+<div id="main">
+    <div id="header">
+        <h1>SITforC</h1>
+    </div>
+
+    <div id="sidebar">
+        <h1>Navigation</h1>
+        <ul>
+            <li><a href="/index.html">Home</a></li>
+            <li><a href="/screenshots.html">Screenshots</a></li>
+            <li><a href="/install.html">Install</a></li>
+            <li><a href="http://github.com/ms4py/sitforc">Source</a></li>
+        </ul>
+
+    </div>
+    <div id="content">
+
+        <h1>Installation</h1>
+<p>First, you have to download the application from <a href="/home">Home</a>.</p>
+<p>Since <em>SITforC</em> supplies a lot of features it depends on some external libraries.
+If you are running Windows, you should consider using the installer instead of obtaining
+all the libraries by yourself.  On a UNIX-like system these dependencies should
+be in the package manager of your distribution.</p>
+<h2>Dependencies</h2>
+<p><em>SITforC</em> depends on following libraries.</p>
+
+<ul>
+<li><a href="http://numpy.scipy.org/">numpy</a></li>
+<li><a href="http://scipy.org/">scipy</a></li>
+<li><a href="http://code.google.com/p/sympy/">sympy</a></li>
+<li><a href="http://matplotlib.sourceforge.net/">matplotlib</a></li>
+<li><a href="http://www.pygtk.org/">pygtk</a></li>
+<li><a href="http://www.voidspace.org.uk/python/configobj.html">configobj</a></li>
+</ul>
+<h2>Installing on Ubuntu (9.10)</h2>
+<p>You can install the hole dependency list with <strong>apt-get</strong> in the following way.</p>
+
+<div class="codehilite"><pre><span class="c"># sudo apt-get install python-numpy python-scipy python-sympy</span>
+<span class="c"># sudo apt-get install python-matplotlib python-configobj</span>
+</pre></div>
+
+
+<p>Now you can start the GUI with the following command in the <em>SITforC</em> source folder.</p>
+<div class="codehilite"><pre><span class="c"># python sitforc-gui.py</span>
+</pre></div>
+
+
+<h2>Portable version for Windows</h2>
+<p>Maybe you are asking yourself:</p>
+<p><em>"There is an installer with a portable version of Python. Why isn't
+the hole package portable?"</em></p>
+<p>It is! ;-) If you choose not to create the startmenu shortcuts, the installer works
+like a simple self-extracting archive.</p>
+<h2>Upgrade the Windows version from source distribution</h2>
+<p>It's a great effort to generate and upload a new installer version, so it is not always up to
+date. But you can simply upgrade your installed version with the source distribution. </p>
+<ol>
+<li>Get the latest source from <a href="/home">Home</a>.</li>
+
+<li>Delete the folder <em>"sitforc"</em> from your install directory.</li>
+<li>Extract the folder <em>"sitforc/sitforc"</em> from source archive into the install directory.</li>
+</ol>
+    </div>
+    <div class="spacer"></div>
+    <div id="footer">2010 &copy; Copyright Marc Schlaich. All Rights Reserved.
+        <br />Design by <a href="http://www.mlpdesign.net" title="www.mlpdesign.net">MLP Design</a>
+    </div>
+
+</div>
+</body>
+</html>
